@@ -58,7 +58,7 @@ export class SimulationEngine {
     }
 
     /**
-     * Safely wrap coordinate within bounds
+     * Safely wrap coordinate within bounds using optimized modulo
      * @private
      */
     wrapCoord(value, max) {
