@@ -19,6 +19,8 @@ class ControllerState {
         this.isRunning = true;
         this.isValid = false;
         this.lastError = null;
+        this.frameHistory = [];
+        this.frameHistorySize = 60; // Keep last 60 frames for averaging
     }
 
     /**
@@ -69,6 +71,25 @@ class ControllerState {
             }
         } catch (e) {
             // Silently fail if we can't display error
+        }
+    }
+
+    /**
+     * Calculate average frame time from history
+     */
+    getAverageFrameTime() {
+        if (this.frameHistory.length === 0) return 0;
+        const sum = this.frameHistory.reduce((a, b) => a + b, 0);
+        return sum / this.frameHistory.length;
+    }
+
+    /**
+     * Add frame time to history
+     */
+    recordFrameTime(delta) {
+        this.frameHistory.push(delta);
+        if (this.frameHistory.length > this.frameHistorySize) {
+            this.frameHistory.shift();
         }
     }
 }
@@ -133,6 +154,9 @@ function initializeController() {
             if (delta < 0 || delta > 1000) {
                 console.warn(`Unusual delta detected: ${delta}ms, resetting`);
                 lastTime = timestamp;
+            } else {
+                // Record frame time for averaging
+                state.recordFrameTime(Math.min(delta, 100)); // Cap at 100ms to avoid outliers
             }
             
             frameCount++;
@@ -141,16 +165,19 @@ function initializeController() {
             // Update telemetry display
             if (fpsTimer >= 1000) {
                 const currentFps = frameCount * 1000 / fpsTimer;
+                const avgFrameTime = state.getAverageFrameTime();
                 
                 if (fpsMetric && !isNaN(currentFps)) {
                     fpsMetric.textContent = `FPS: ${currentFps.toFixed(1)}`;
                 }
-                if (frameTimeMetric) {
-                    frameTimeMetric.textContent = `Frame: ${delta.toFixed(2)}ms`;
+                if (frameTimeMetric && !isNaN(avgFrameTime)) {
+                    // Display average frame time for more accurate representation
+                    frameTimeMetric.textContent = `Frame: ${avgFrameTime.toFixed(2)}ms`;
                 }
                 if (entropyMetric && state.engine) {
                     const entropy = state.engine.calculateEntropyIndex();
-                    entropyMetric.textContent = `Entropy: ${entropy}`;
+                    // Display only the entropy value, not the label
+                    entropyMetric.textContent = entropy;
                     entropyMetric.style.color = '#00ffcc'; // Reset color on success
                 }
                 
@@ -200,7 +227,7 @@ function initializeController() {
     if (perturbBtn) {
         perturbBtn.addEventListener('click', () => {
             try {
-                if (state.engine && state.engine.injectEntropy) {
+                if (state.engine && typeof state.engine.injectEntropy === 'function') {
                     state.engine.injectEntropy();
                     console.log('✓ Entropy injected');
                 }
