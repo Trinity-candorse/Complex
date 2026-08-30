@@ -1,0 +1,107 @@
+<!-- FILE 1: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Neural-Raster Simulation Matrix</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #030305;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+        }
+        #container {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            width: 100vw; height: 100vh;
+        }
+        #canvas-wrapper {
+            position: relative;
+            width: 100%; height: 100%;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        #sidebar {
+            background: #08090c;
+            border-left: 1px solid #1a1d24;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 10;
+        }
+        .telemetry-box {
+            background: #0d0f14;
+            border: 1px solid #222733;
+            padding: 12px;
+            border-radius: 4px;
+        }
+        .telemetry-box h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #56617a;
+            margin-bottom: 8px;
+        }
+        .metric {
+            font-size: 14px;
+            font-weight: bold;
+            color: #00ffcc;
+        }
+        .btn {
+            background: #00ffcc;
+            color: #030305;
+            border: none;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #00cca3; }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="canvas-wrapper">
+            <canvas id="matrixCanvas"></canvas>
+        </div>
+        <div id="sidebar">
+            <div class="telemetry-box">
+                <h3>System Architecture</h3>
+                <div class="metric">Zero-Dependency ES6</div>
+            </div>
+            <div class="telemetry-box">
+                <h3>Frame Telemetry</h3>
+                <div id="fpsMetric" class="metric">FPS: 0.0</div>
+                <div id="frameTime" class="metric" style="margin-top:5px; font-size:11px; color:#888;">Frame: 0ms</div>
+            </div>
+            <div class="telemetry-box">
+                <h3>Active Nodes</h3>
+                <div id="nodeCount" class="metric">16,384 Entities</div>
+            </div>
+            <div class="telemetry-box">
+                <h3>Entropy Index</h3>
+                <div id="entropyMetric" class="metric">0.0000</div>
+            </div>
+            <button class="btn" id="toggleModeBtn">Toggle Phase Mode</button>
+            <button class="btn" id="perturbBtn" style="background:#ff0055; color:#fff;">Inject Entropy Spike</button>
+        </div>
+    </div>
+    <script type="module" src="./controller.js"></script>
+</body>
+  </html>
