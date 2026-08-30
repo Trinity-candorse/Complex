@@ -84,7 +84,7 @@ export class SimulationEngine {
                 }
                 
                 // Introduce algorithmic noise modulation based on time
-                if (Math.sin(x * 0.1 + this.timeSystem) * Math.cos(y * 0.1) > 0.98) {
+                if (Math.sin(x * 0.1 + this.timeStep) * Math.cos(y * 0.1) > 0.98) {
                     next = (next + 0.5) % 1.0;
                 }
 
@@ -145,4 +145,4 @@ export class SimulationEngine {
         }
         return (activeCount / this.size).toFixed(4);
     }
-        }
+}
