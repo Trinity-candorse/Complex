@@ -4,28 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Autonomous Neural-Cellular Automata Simulation with N-Body Physics">
+    <meta name="description" content="Autonomous Neural-Cellular Automata Simulation with N-Body Physics - Interactive visualization combining cellular automata with particle physics">
+    <meta name="theme-color" content="#030305">
     <title>Autonomous Neural-Raster Simulation Matrix</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* Global styles */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
         
         body, html {
-            width: 100%; height: 100%;
+            width: 100%; 
+            height: 100%;
             background-color: #030305;
             color: #00ffcc;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
         }
         
+        /* Main layout */
         #container {
             display: grid;
             grid-template-columns: 1fr 320px;
-            width: 100vw; height: 100vh;
+            width: 100vw; 
+            height: 100vh;
         }
         
+        /* Canvas wrapper */
         #canvas-wrapper {
             position: relative;
-            width: 100%; height: 100%;
+            width: 100%; 
+            height: 100%;
             background: #000;
             display: flex;
             justify-content: center;
@@ -47,12 +58,10 @@
             text-align: center;
             color: #ff0055;
             padding: 20px;
+            font-size: 14px;
         }
         
-        canvas:not(:defined) ~ .no-canvas-fallback {
-            display: block;
-        }
-        
+        /* Sidebar panel */
         #sidebar {
             background: #08090c;
             border-left: 1px solid #1a1d24;
@@ -65,6 +74,7 @@
             max-height: 100vh;
         }
         
+        /* Telemetry boxes */
         .telemetry-box {
             background: #0d0f14;
             border: 1px solid #222733;
@@ -79,6 +89,7 @@
             letter-spacing: 1px;
             color: #56617a;
             margin-bottom: 8px;
+            word-break: break-word;
         }
         
         .metric {
@@ -88,6 +99,7 @@
             word-break: break-word;
         }
         
+        /* Buttons */
         .btn {
             background: #00ffcc;
             color: #030305;
@@ -100,6 +112,10 @@
             transition: background 0.2s ease;
             border-radius: 2px;
             font-size: 12px;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .btn:hover {
@@ -116,21 +132,70 @@
             opacity: 0.5;
         }
         
-        /* Responsive design for small screens */
-        @media (max-width: 768px) {
+        /* Responsive design for tablets */
+        @media (max-width: 1024px) {
             #container {
                 grid-template-columns: 1fr;
             }
             
             #sidebar {
                 grid-row: 2;
+                grid-column: 1;
+                max-height: 35vh;
+                padding: 15px;
+                gap: 12px;
+            }
+            
+            .telemetry-box {
                 padding: 10px;
+            }
+            
+            .metric {
+                font-size: 12px;
+            }
+        }
+        
+        /* Responsive design for mobile */
+        @media (max-width: 640px) {
+            #container {
+                grid-template-columns: 1fr;
+            }
+            
+            #sidebar {
+                grid-row: 2;
+                grid-column: 1;
+                max-height: 40vh;
+                padding: 12px;
                 gap: 10px;
-                max-height: 200px;
             }
             
             .telemetry-box {
                 padding: 8px;
+            }
+            
+            .telemetry-box h3 {
+                font-size: 10px;
+                margin-bottom: 6px;
+            }
+            
+            .metric {
+                font-size: 12px;
+            }
+            
+            .btn {
+                padding: 8px;
+                font-size: 11px;
+                min-height: 36px;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            #sidebar {
+                display: none;
             }
         }
     </style>
@@ -138,39 +203,40 @@
 <body>
     <div id="container">
         <div id="canvas-wrapper">
-            <canvas id="matrixCanvas" aria-label="Simulation visualization canvas"></canvas>
+            <canvas id="matrixCanvas" aria-label="Neural-cellular automata simulation visualization"></canvas>
             <div class="no-canvas-fallback">
                 <p>Your browser does not support HTML5 Canvas.</p>
                 <p>Please use a modern browser to view this simulation.</p>
             </div>
         </div>
-        <div id="sidebar">
+        <div id="sidebar" role="complementary" aria-label="Simulation controls and telemetry">
             <div class="telemetry-box">
                 <h3>System Architecture</h3>
                 <div class="metric">Zero-Dependency ES6</div>
             </div>
             <div class="telemetry-box">
                 <h3>Frame Telemetry</h3>
-                <div id="fpsMetric" class="metric">FPS: 0.0</div>
-                <div id="frameTime" class="metric" style="margin-top:5px; font-size:11px; color:#888;">Frame: 0ms</div>
+                <div id="fpsMetric" class="metric" aria-live="polite">FPS: 0.0</div>
+                <div id="frameTime" class="metric" style="margin-top:5px; font-size:11px; color:#888;" aria-live="polite">Frame: 0ms</div>
             </div>
             <div class="telemetry-box">
-                <h3>Active Nodes</h3>
-                <div id="nodeCount" class="metric">16,384 Entities</div>
+                <h3>Simulation Grid</h3>
+                <div id="nodeCount" class="metric" aria-label="Grid dimensions">192×108 Cells</div>
             </div>
             <div class="telemetry-box">
                 <h3>Entropy Index</h3>
-                <div id="entropyMetric" class="metric">0.0000</div>
+                <div id="entropyMetric" class="metric" aria-live="polite" aria-label="Current entropy level">0.0000</div>
             </div>
-            <button class="btn" id="toggleModeBtn" type="button">Toggle Phase Mode</button>
-            <button class="btn" id="perturbBtn" type="button" style="background:#ff0055; color:#fff;">Inject Entropy Spike</button>
+            <button class="btn" id="toggleModeBtn" type="button" aria-label="Toggle simulation pause and resume">Toggle Phase Mode</button>
+            <button class="btn" id="perturbBtn" type="button" style="background:#ff0055; color:#fff;" aria-label="Inject random entropy into the simulation">Inject Entropy Spike</button>
         </div>
     </div>
     
     <script type="module" src="./Controller.js"></script>
     <noscript>
-        <div style="color: #ff0055; padding: 20px; text-align: center;">
+        <div style="color: #ff0055; padding: 20px; text-align: center; font-family: monospace;">
             <p>This application requires JavaScript to be enabled.</p>
+            <p>Please enable JavaScript in your browser settings.</p>
         </div>
     </noscript>
 </body>
