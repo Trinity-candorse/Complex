@@ -2,8 +2,8 @@
 /**
  * UI Controller, Telemetry Teleprinter, and System Mainloop Driver
  */
-import { SimulationEngine } from './engine.js';
-import { Renderer } from './renderer.js';
+import { SimulationEngine } from './Engine.js';
+import { Renderer } from './Renderer.js';
 
 // Configuration parameters for simulation grid density
 const MATRIX_WIDTH = 192;
