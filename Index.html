@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Autonomous Neural-Cellular Automata Simulation with N-Body Physics">
     <title>Autonomous Neural-Raster Simulation Matrix</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body, html {
             width: 100%; height: 100%;
             background-color: #030305;
@@ -14,11 +16,13 @@
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
         }
+        
         #container {
             display: grid;
             grid-template-columns: 1fr 320px;
             width: 100vw; height: 100vh;
         }
+        
         #canvas-wrapper {
             position: relative;
             width: 100%; height: 100%;
@@ -26,7 +30,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
+        
         canvas {
             display: block;
             width: 100%;
@@ -34,6 +40,19 @@
             image-rendering: pixelated;
             image-rendering: crisp-edges;
         }
+        
+        /* Fallback message for no canvas support */
+        .no-canvas-fallback {
+            display: none;
+            text-align: center;
+            color: #ff0055;
+            padding: 20px;
+        }
+        
+        canvas:not(:defined) ~ .no-canvas-fallback {
+            display: block;
+        }
+        
         #sidebar {
             background: #08090c;
             border-left: 1px solid #1a1d24;
@@ -42,13 +61,18 @@
             flex-direction: column;
             gap: 15px;
             z-index: 10;
+            overflow-y: auto;
+            max-height: 100vh;
         }
+        
         .telemetry-box {
             background: #0d0f14;
             border: 1px solid #222733;
             padding: 12px;
             border-radius: 4px;
+            min-width: 0;
         }
+        
         .telemetry-box h3 {
             font-size: 11px;
             text-transform: uppercase;
@@ -56,11 +80,14 @@
             color: #56617a;
             margin-bottom: 8px;
         }
+        
         .metric {
             font-size: 14px;
             font-weight: bold;
             color: #00ffcc;
+            word-break: break-word;
         }
+        
         .btn {
             background: #00ffcc;
             color: #030305;
@@ -70,15 +97,52 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            transition: background 0.2s;
+            transition: background 0.2s ease;
+            border-radius: 2px;
+            font-size: 12px;
         }
-        .btn:hover { background: #00cca3; }
+        
+        .btn:hover {
+            background: #00cca3;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        /* Responsive design for small screens */
+        @media (max-width: 768px) {
+            #container {
+                grid-template-columns: 1fr;
+            }
+            
+            #sidebar {
+                grid-row: 2;
+                padding: 10px;
+                gap: 10px;
+                max-height: 200px;
+            }
+            
+            .telemetry-box {
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="container">
         <div id="canvas-wrapper">
-            <canvas id="matrixCanvas"></canvas>
+            <canvas id="matrixCanvas" aria-label="Simulation visualization canvas"></canvas>
+            <div class="no-canvas-fallback">
+                <p>Your browser does not support HTML5 Canvas.</p>
+                <p>Please use a modern browser to view this simulation.</p>
+            </div>
         </div>
         <div id="sidebar">
             <div class="telemetry-box">
@@ -98,10 +162,16 @@
                 <h3>Entropy Index</h3>
                 <div id="entropyMetric" class="metric">0.0000</div>
             </div>
-            <button class="btn" id="toggleModeBtn">Toggle Phase Mode</button>
-            <button class="btn" id="perturbBtn" style="background:#ff0055; color:#fff;">Inject Entropy Spike</button>
+            <button class="btn" id="toggleModeBtn" type="button">Toggle Phase Mode</button>
+            <button class="btn" id="perturbBtn" type="button" style="background:#ff0055; color:#fff;">Inject Entropy Spike</button>
         </div>
     </div>
+    
     <script type="module" src="./Controller.js"></script>
+    <noscript>
+        <div style="color: #ff0055; padding: 20px; text-align: center;">
+            <p>This application requires JavaScript to be enabled.</p>
+        </div>
+    </noscript>
 </body>
 </html>
